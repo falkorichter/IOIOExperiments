@@ -20,7 +20,6 @@ import android.widget.ToggleButton;
 public class MainActivity extends AbstractIOIOActivity {
 	private ToggleButton button_;
 	private ToggleButton button2_;
-	private Array<ToggleButton> toggleButtons;
 
 	/**
 	 * Called when the activity is first created. Here we normally initialize
@@ -32,11 +31,7 @@ public class MainActivity extends AbstractIOIOActivity {
 		setContentView(R.layout.main);
 		button_ = (ToggleButton) findViewById(R.id.button1);
 		button2_ = (ToggleButton) findViewById(R.id.button2);
-		toggleButtons = new Array();
-		for (int i = 0; i < 6; i++) {
-			toggleButtons.
-			
-		}
+
 	}
 
 	/**
@@ -50,6 +45,8 @@ public class MainActivity extends AbstractIOIOActivity {
 		/** The on-board LED. */
 		private DigitalOutput led_;
 		private DigitalOutput myOwnLed_;
+		private DigitalOutput[] myOwnLeds;
+		private int currentLED;
 
 		/**
 		 * Called every time a connection with IOIO has been established.
@@ -62,8 +59,15 @@ public class MainActivity extends AbstractIOIOActivity {
 		 */
 		@Override
 		protected void setup() throws ConnectionLostException {
+			currentLED = 0;
 			led_ = ioio_.openDigitalOutput(0, true);
 			myOwnLed_ = ioio_.openDigitalOutput(1, true);
+			myOwnLeds = new DigitalOutput[5];
+			for (int i = 0; i < myOwnLeds.length; i++) {
+				DigitalOutput led = myOwnLeds[i];
+				led = ioio_.openDigitalOutput((i*2)+3);
+				myOwnLeds[i] = led;
+			}
 		}
 
 		/**
@@ -78,8 +82,17 @@ public class MainActivity extends AbstractIOIOActivity {
 		protected void loop() throws ConnectionLostException {
 			led_.write(!button_.isChecked());
 			myOwnLed_.write(!button2_.isChecked());
+			//for (DigitalOutput led : myOwnLeds) {
+			//	led.write(!button2_.isChecked());
+			//}
+			myOwnLeds[currentLED].write(false);
+			currentLED++;
+			if(currentLED == myOwnLeds.length-1){
+				currentLED = 0;
+			}
+			myOwnLeds[currentLED].write(true);
 			try {
-				sleep(10);
+				sleep(500);
 			} catch (InterruptedException e) {
 			}
 		}
