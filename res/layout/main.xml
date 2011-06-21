@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<TableRow>
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="@string/hello"
+			android:id="@+id/title" />
+	</TableRow>
+	<TableRow>
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Yellow LED"
+			android:id="@+id/title1" />
+		<ToggleButton android:text="I/O 0" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/button1"></ToggleButton>
+	</TableRow>
+
+	<TableRow>
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Output 1"
+			android:id="@+id/title2" />
+		<ToggleButton android:text="I/O 1" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:id="@+id/button2"></ToggleButton>
+	</TableRow>
+</TableLayout>
