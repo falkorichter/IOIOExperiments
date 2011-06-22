@@ -7,6 +7,7 @@ import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.AbstractIOIOActivity;
 import android.os.Bundle;
+import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
 /**
@@ -20,6 +21,9 @@ import android.widget.ToggleButton;
 public class MainActivity extends AbstractIOIOActivity {
 	private ToggleButton button_;
 	private ToggleButton button2_;
+	private SeekBar frequencySeekBar;
+	private SeekBar  ledCountSeekBar;
+	private static final int LED_COUNT = 23;
 
 	/**
 	 * Called when the activity is first created. Here we normally initialize
@@ -31,6 +35,12 @@ public class MainActivity extends AbstractIOIOActivity {
 		setContentView(R.layout.main);
 		button_ = (ToggleButton) findViewById(R.id.button1);
 		button2_ = (ToggleButton) findViewById(R.id.button2);
+		frequencySeekBar = (SeekBar) findViewById(R.id.frequencySeekBar);
+		frequencySeekBar.setMax(1000);
+		frequencySeekBar.setProgress(500);
+		ledCountSeekBar = (SeekBar) findViewById(R.id.ledCountSeekBar);
+		ledCountSeekBar.setMax(LED_COUNT);
+		ledCountSeekBar.setProgress(5);
 
 	}
 
@@ -47,6 +57,7 @@ public class MainActivity extends AbstractIOIOActivity {
 		private DigitalOutput myOwnLed_;
 		private DigitalOutput[] myOwnLeds;
 		private int currentLED;
+		
 
 		/**
 		 * Called every time a connection with IOIO has been established.
@@ -62,7 +73,7 @@ public class MainActivity extends AbstractIOIOActivity {
 			currentLED = 0;
 			led_ = ioio_.openDigitalOutput(0, true);
 			myOwnLed_ = ioio_.openDigitalOutput(1, true);
-			myOwnLeds = new DigitalOutput[5];
+			myOwnLeds = new DigitalOutput[LED_COUNT];
 			for (int i = 0; i < myOwnLeds.length; i++) {
 				DigitalOutput led = myOwnLeds[i];
 				led = ioio_.openDigitalOutput((i*2)+3);
@@ -85,14 +96,14 @@ public class MainActivity extends AbstractIOIOActivity {
 			//for (DigitalOutput led : myOwnLeds) {
 			//	led.write(!button2_.isChecked());
 			//}
-			myOwnLeds[currentLED].write(false);
+			myOwnLeds[currentLED].write(true);
 			currentLED++;
-			if(currentLED == myOwnLeds.length-1){
+			if(currentLED >= ledCountSeekBar.getProgress()){
 				currentLED = 0;
 			}
-			myOwnLeds[currentLED].write(true);
+			myOwnLeds[currentLED].write(false);
 			try {
-				sleep(500);
+				sleep(frequencySeekBar.getProgress());
 			} catch (InterruptedException e) {
 			}
 		}

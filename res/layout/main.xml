@@ -2,24 +2,39 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<TableRow>
+	<TableRow android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/hello"
 			android:id="@+id/title" />
 	</TableRow>
-	<TableRow>
-		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="Yellow LED"
-			android:id="@+id/title1" />
-		<ToggleButton android:text="I/O 0" android:layout_width="wrap_content"
+	<TableRow android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="Yellow LED" />
+		<ToggleButton android:text="I/O 0" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:id="@+id/button1"></ToggleButton>
 	</TableRow>
 
-	<TableRow>
-		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="Output 1"
-			android:id="@+id/title2" />
+	<TableRow android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="Output 1" />
 		<ToggleButton android:text="I/O 1" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/button2"></ToggleButton>
+	</TableRow>
+	<TableRow android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="Frequency" />
+		<SeekBar android:layout_height="wrap_content" android:id="@+id/frequencySeekBar"
+			android:layout_width="200dp"></SeekBar>
+	</TableRow>
+	<TableRow android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<TextView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="No. LEDs" />
+		<SeekBar android:layout_height="wrap_content" android:id="@+id/ledCountSeekBar"
+			android:layout_width="200dp"></SeekBar>
 	</TableRow>
 </TableLayout>
