@@ -1,14 +1,19 @@
 package ioio.examples.hello;
 
-import java.sql.Array;
 
 import ioio.examples.hello.R;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.AbstractIOIOActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnKeyListener;
+import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.ToggleButton;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /**
  * This is the main activity of the HelloIOIO example application.
@@ -21,10 +26,45 @@ import android.widget.ToggleButton;
 public class MainActivity extends AbstractIOIOActivity {
 	private ToggleButton button_;
 	private ToggleButton button2_;
+	private ToggleButton button3_;
 	private SeekBar frequencySeekBar;
+	private EditText frequencyEditText;
 	private SeekBar  ledCountSeekBar;
+	private EditText ledCountEditText;
 	private static final int LED_COUNT = 23;
 
+	private void connectSeekBarAndEditText(final SeekBar seekbar, final EditText editText){
+		editText.setText(""+seekbar.getProgress());
+		editText.setOnKeyListener(new OnKeyListener() {
+			
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (editText.getText().length() > 0) {
+					seekbar.setProgress(Integer.parseInt(editText.getText().toString()));
+				}
+				else {
+					seekbar.setProgress(0);
+				}
+				return false;
+			}
+		});
+		
+		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			public void onStopTrackingTouch(SeekBar seekBar) {
+			}
+			
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+			
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if (fromUser){
+					editText.setText(""+seekBar.getProgress());
+				}
+			}
+		});
+	}
+	
 	/**
 	 * Called when the activity is first created. Here we normally initialize
 	 * our GUI.
@@ -35,14 +75,25 @@ public class MainActivity extends AbstractIOIOActivity {
 		setContentView(R.layout.main);
 		button_ = (ToggleButton) findViewById(R.id.button1);
 		button2_ = (ToggleButton) findViewById(R.id.button2);
+		button3_ = (ToggleButton) findViewById(R.id.button3);
 		frequencySeekBar = (SeekBar) findViewById(R.id.frequencySeekBar);
 		frequencySeekBar.setMax(1000);
 		frequencySeekBar.setProgress(500);
+		frequencyEditText = (EditText) findViewById(R.id.frequencyEditText);
+		
+		
+		connectSeekBarAndEditText(frequencySeekBar, frequencyEditText);
+		
 		ledCountSeekBar = (SeekBar) findViewById(R.id.ledCountSeekBar);
 		ledCountSeekBar.setMax(LED_COUNT);
 		ledCountSeekBar.setProgress(5);
+		ledCountEditText = (EditText) findViewById(R.id.ledCountEditText);
+		
+		connectSeekBarAndEditText(ledCountSeekBar, ledCountEditText);
 
 	}
+	
+	
 
 	/**
 	 * This is the thread on which all the IOIO activity happens. It will be run
@@ -97,10 +148,19 @@ public class MainActivity extends AbstractIOIOActivity {
 			//	led.write(!button2_.isChecked());
 			//}
 			myOwnLeds[currentLED].write(true);
-			currentLED++;
-			if(currentLED >= ledCountSeekBar.getProgress()){
-				currentLED = 0;
+			if(button3_.isChecked()){
+				currentLED++;
+				if(currentLED >= ledCountSeekBar.getProgress()){
+					currentLED = 0;
+				}
+			}else {
+				currentLED--;
+				if(currentLED < 0 ){
+					currentLED = ledCountSeekBar.getProgress()-1;
+				}
 			}
+			
+			
 			myOwnLeds[currentLED].write(false);
 			try {
 				sleep(frequencySeekBar.getProgress());
