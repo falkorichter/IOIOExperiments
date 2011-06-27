@@ -1,10 +1,7 @@
 package ioio.examples.hello;
 
 
-import java.util.ArrayList;
-
 import ioio.examples.hello.R;
-import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.AbstractIOIOActivity;
@@ -18,7 +15,6 @@ import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
@@ -39,13 +35,13 @@ public class MainActivity extends AbstractIOIOActivity {
 	private SeekBar  ledCountSeekBar;
 	private EditText ledCountEditText;
 	private SeekBar  runningLedCountSeekBar;
-	private EditText runningLedCountEditText;
-	private int LED_COUNT = 23;
+	private EditText runningLedCountEditText;;
+	private static final int LED_COUNT = 23;
 
 	private void connectSeekBarAndEditText(final SeekBar seekbar, final EditText editText){
 		editText.setText(""+seekbar.getProgress());
 		editText.setOnKeyListener(new OnKeyListener() {
-
+			
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				if (editText.getText().length() > 0) {
 					seekbar.setProgress(Integer.parseInt(editText.getText().toString()));
@@ -56,15 +52,15 @@ public class MainActivity extends AbstractIOIOActivity {
 				return false;
 			}
 		});
-
+		
 		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
+			
 			public void onStopTrackingTouch(SeekBar seekBar) {
 			}
-
+			
 			public void onStartTrackingTouch(SeekBar seekBar) {
 			}
-
+			
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
 				if (fromUser){
@@ -73,28 +69,7 @@ public class MainActivity extends AbstractIOIOActivity {
 			}
 		});
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 0, 0, "LED Test");
-		menu.add(0, 1, 1,"Input Test");
-		return super.onCreateOptionsMenu(menu);
-	}
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case 0:
-			Intent intent = new Intent(this, StatusTest.class);
-			startActivity(intent);
-			break;
-		case 1:
-			Intent intent1 = new Intent(this, InputTest.class);
-			startActivity(intent1);
-		default:
-			break;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	
 	/**
 	 * Called when the activity is first created. Here we normally initialize
 	 * our GUI.
@@ -110,27 +85,55 @@ public class MainActivity extends AbstractIOIOActivity {
 		frequencySeekBar.setMax(1000);
 		frequencySeekBar.setProgress(500);
 		frequencyEditText = (EditText) findViewById(R.id.frequencyEditText);
-
-
+		
+		
 		connectSeekBarAndEditText(frequencySeekBar, frequencyEditText);
-
+		
 		ledCountSeekBar = (SeekBar) findViewById(R.id.ledCountSeekBar);
 		ledCountSeekBar.setMax(LED_COUNT);
 		ledCountSeekBar.setProgress(5);
 		ledCountEditText = (EditText) findViewById(R.id.ledCountEditText);
-
+		
 		connectSeekBarAndEditText(ledCountSeekBar, ledCountEditText);
+		
+		
 		
 		runningLedCountSeekBar = (SeekBar) findViewById(R.id.runningLedCountSeekBar);
 		runningLedCountSeekBar.setMax(LED_COUNT);
-		runningLedCountSeekBar.setProgress(5);
-		runningLedCountEditText = (EditText) findViewById(R.id.ledCountEditText);
+		runningLedCountSeekBar.setProgress(1);
+		runningLedCountEditText = (EditText) findViewById(R.id.runningLedCountEditText);
 
 		connectSeekBarAndEditText(runningLedCountSeekBar, runningLedCountEditText);
 
 	}
-
-
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 2, 0,"Runnig Detection");
+		menu.add(0, 0, 1, "LED Test");
+		menu.add(0, 1, 2,"Input Test");
+		return super.onCreateOptionsMenu(menu);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case 0:
+			Intent intent = new Intent(this, StatusTest.class);
+			startActivity(intent);
+			break;
+		case 1:
+			Intent intent1 = new Intent(this, InputTest.class);
+			startActivity(intent1);
+		case 2:
+			Intent intent2 = new Intent(this, BetterRunningLights.class);
+			startActivity(intent2);
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 
 	/**
 	 * This is the thread on which all the IOIO activity happens. It will be run
@@ -143,9 +146,9 @@ public class MainActivity extends AbstractIOIOActivity {
 		/** The on-board LED. */
 		private DigitalOutput led_;
 		private DigitalOutput myOwnLed_;
-		private ArrayList<DigitalOutput> myOwnLeds;
+		private DigitalOutput[] myOwnLeds;
 		private int currentLED;
-
+		
 
 		/**
 		 * Called every time a connection with IOIO has been established.
@@ -161,32 +164,12 @@ public class MainActivity extends AbstractIOIOActivity {
 			currentLED = 0;
 			led_ = ioio_.openDigitalOutput(0, true);
 			myOwnLed_ = ioio_.openDigitalOutput(1, true);
-			myOwnLeds = new ArrayList<DigitalOutput>(48);
-			for (int i = 2; i <= 48; i++) {
-				DigitalInput input = ioio_.openDigitalInput(i);
-				try {
-					if (input.read()) {
-						input.close();
-						myOwnLeds.add(ioio_.openDigitalOutput(i,true));
-						Toast.makeText(MainActivity.this, "pin "+i+" true", Toast.LENGTH_SHORT).show();
-					}
-					else {
-						Toast.makeText(MainActivity.this, "pin "+i+" false", Toast.LENGTH_SHORT).show();
-						input.close();
-					}
-					try {
-						sleep(1000);
-					} catch (InterruptedException e) {
-					}
-				} catch (InterruptedException e) {
-					Toast.makeText(MainActivity.this, "problem with pin "+i, Toast.LENGTH_SHORT).show();
-					input.close();
-				} 
-
+			myOwnLeds = new DigitalOutput[LED_COUNT];
+			for (int i = 0; i < myOwnLeds.length; i++) {
+				DigitalOutput led = myOwnLeds[i];
+				led = ioio_.openDigitalOutput((i*2)+3);
+				myOwnLeds[i] = led;
 			}
-			LED_COUNT = myOwnLeds.toArray().length;
-			ledCountSeekBar.setMax(LED_COUNT);
-			Toast.makeText(MainActivity.this, "found "+ ledCountSeekBar.getMax()+ "LEDs", Toast.LENGTH_SHORT).show();
 		}
 
 		/**
@@ -201,31 +184,30 @@ public class MainActivity extends AbstractIOIOActivity {
 		protected void loop() throws ConnectionLostException {
 			led_.write(!button_.isChecked());
 			myOwnLed_.write(!button2_.isChecked());
-			if (LED_COUNT == 0) {
-				return;
-			}
 			//for (DigitalOutput led : myOwnLeds) {
 			//	led.write(!button2_.isChecked());
 			//}
-			int numOfLeds = runningLedCountSeekBar.getProgress();
-			if (numOfLeds == 0) {
-				return;
-			}
-			myOwnLeds.get(currentLED-runningLedCountSeekBar.getProgress() % LED_COUNT).write(true);
+			
 			if(button3_.isChecked()){
+				int oldLED = currentLED - runningLedCountSeekBar.getProgress();
+				oldLED = oldLED % ledCountSeekBar.getProgress();
+				myOwnLeds[oldLED].write(true);
 				currentLED++;
 				if(currentLED >= ledCountSeekBar.getProgress()){
 					currentLED = 0;
 				}
 			}else {
+				int oldLED = currentLED + runningLedCountSeekBar.getProgress();
+				oldLED = oldLED % ledCountSeekBar.getProgress();
+				myOwnLeds[oldLED].write(true);
 				currentLED--;
 				if(currentLED < 0 ){
 					currentLED = ledCountSeekBar.getProgress()-1;
 				}
 			}
-
-
-			myOwnLeds.get(currentLED).write(false);
+			
+			
+			myOwnLeds[currentLED].write(false);
 			try {
 				sleep(frequencySeekBar.getProgress());
 			} catch (InterruptedException e) {
