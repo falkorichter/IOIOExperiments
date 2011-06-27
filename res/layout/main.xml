@@ -41,7 +41,7 @@
 	</LinearLayout>
 
 	<TextView android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="Number of LEDs" />
+		android:layout_height="wrap_content" android:text="Number of LEDs used for Animation" />
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content">
 		<EditText android:id="@+id/ledCountEditText"
@@ -50,6 +50,18 @@
 		</EditText>
 		<SeekBar android:layout_gravity="center_vertical"
 			android:layout_height="wrap_content" android:id="@+id/ledCountSeekBar"
+			android:layout_width="fill_parent"></SeekBar>
+	</LinearLayout>
+	<TextView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Number of running LEDs" />
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content">
+		<EditText android:id="@+id/runningLedCountEditText"
+			android:inputType="number" android:layout_height="wrap_content"
+			android:layout_width="60dip">
+		</EditText>
+		<SeekBar android:layout_gravity="center_vertical"
+			android:layout_height="wrap_content" android:id="@+id/runningLedCountSeekBar"
 			android:layout_width="fill_parent"></SeekBar>
 	</LinearLayout>
 </LinearLayout>

@@ -5,8 +5,11 @@ import ioio.examples.hello.R;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.AbstractIOIOActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
@@ -31,6 +34,8 @@ public class MainActivity extends AbstractIOIOActivity {
 	private EditText frequencyEditText;
 	private SeekBar  ledCountSeekBar;
 	private EditText ledCountEditText;
+	private SeekBar  runningLedCountSeekBar;
+	private EditText runningLedCountEditText;;
 	private static final int LED_COUNT = 23;
 
 	private void connectSeekBarAndEditText(final SeekBar seekbar, final EditText editText){
@@ -90,9 +95,44 @@ public class MainActivity extends AbstractIOIOActivity {
 		ledCountEditText = (EditText) findViewById(R.id.ledCountEditText);
 		
 		connectSeekBarAndEditText(ledCountSeekBar, ledCountEditText);
+		
+		
+		
+		runningLedCountSeekBar = (SeekBar) findViewById(R.id.runningLedCountSeekBar);
+		runningLedCountSeekBar.setMax(LED_COUNT);
+		runningLedCountSeekBar.setProgress(1);
+		runningLedCountEditText = (EditText) findViewById(R.id.runningLedCountEditText);
+
+		connectSeekBarAndEditText(runningLedCountSeekBar, runningLedCountEditText);
 
 	}
 	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 2, 0,"Runnig Detection");
+		menu.add(0, 0, 1, "LED Test");
+		menu.add(0, 1, 2,"Input Test");
+		return super.onCreateOptionsMenu(menu);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case 0:
+			Intent intent = new Intent(this, StatusTest.class);
+			startActivity(intent);
+			break;
+		case 1:
+			Intent intent1 = new Intent(this, InputTest.class);
+			startActivity(intent1);
+		case 2:
+			Intent intent2 = new Intent(this, BetterRunningLights.class);
+			startActivity(intent2);
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	
 
 	/**
@@ -147,13 +187,19 @@ public class MainActivity extends AbstractIOIOActivity {
 			//for (DigitalOutput led : myOwnLeds) {
 			//	led.write(!button2_.isChecked());
 			//}
-			myOwnLeds[currentLED].write(true);
+			
 			if(button3_.isChecked()){
+				int oldLED = currentLED - runningLedCountSeekBar.getProgress();
+				oldLED = oldLED % ledCountSeekBar.getProgress();
+				myOwnLeds[oldLED].write(true);
 				currentLED++;
 				if(currentLED >= ledCountSeekBar.getProgress()){
 					currentLED = 0;
 				}
 			}else {
+				int oldLED = currentLED + runningLedCountSeekBar.getProgress();
+				oldLED = oldLED % ledCountSeekBar.getProgress();
+				myOwnLeds[oldLED].write(true);
 				currentLED--;
 				if(currentLED < 0 ){
 					currentLED = ledCountSeekBar.getProgress()-1;
