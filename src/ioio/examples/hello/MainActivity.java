@@ -8,8 +8,11 @@ import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.AbstractIOIOActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.widget.EditText;
@@ -71,6 +74,27 @@ public class MainActivity extends AbstractIOIOActivity {
 		});
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 0, 0, "LED Test");
+		menu.add(0, 1, 1,"Input Test");
+		return super.onCreateOptionsMenu(menu);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case 0:
+			Intent intent = new Intent(this, StatusTest.class);
+			startActivity(intent);
+			break;
+		case 1:
+			Intent intent1 = new Intent(this, InputTest.class);
+			startActivity(intent1);
+		default:
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	/**
 	 * Called when the activity is first created. Here we normally initialize
 	 * our GUI.
@@ -138,26 +162,31 @@ public class MainActivity extends AbstractIOIOActivity {
 			led_ = ioio_.openDigitalOutput(0, true);
 			myOwnLed_ = ioio_.openDigitalOutput(1, true);
 			myOwnLeds = new ArrayList<DigitalOutput>(48);
-			for (int i = 1; i <= 48; i++) {
+			for (int i = 2; i <= 48; i++) {
 				DigitalInput input = ioio_.openDigitalInput(i);
 				try {
 					if (input.read()) {
 						input.close();
 						myOwnLeds.add(ioio_.openDigitalOutput(i,true));
+						Toast.makeText(MainActivity.this, "pin "+i+" true", Toast.LENGTH_SHORT).show();
 					}
 					else {
+						Toast.makeText(MainActivity.this, "pin "+i+" false", Toast.LENGTH_SHORT).show();
 						input.close();
 					}
+					try {
+						sleep(1000);
+					} catch (InterruptedException e) {
+					}
 				} catch (InterruptedException e) {
-					Toast.makeText(MainActivity.this, "problem with pin "+i, 1000).show();
-				} finally{
+					Toast.makeText(MainActivity.this, "problem with pin "+i, Toast.LENGTH_SHORT).show();
 					input.close();
-				}
+				} 
 
 			}
 			LED_COUNT = myOwnLeds.toArray().length;
 			ledCountSeekBar.setMax(LED_COUNT);
-			Toast.makeText(MainActivity.this, "found "+ ledCountSeekBar.getMax()+ "LEDs", 1000).show();
+			Toast.makeText(MainActivity.this, "found "+ ledCountSeekBar.getMax()+ "LEDs", Toast.LENGTH_SHORT).show();
 		}
 
 		/**
@@ -172,6 +201,9 @@ public class MainActivity extends AbstractIOIOActivity {
 		protected void loop() throws ConnectionLostException {
 			led_.write(!button_.isChecked());
 			myOwnLed_.write(!button2_.isChecked());
+			if (LED_COUNT == 0) {
+				return;
+			}
 			//for (DigitalOutput led : myOwnLeds) {
 			//	led.write(!button2_.isChecked());
 			//}
