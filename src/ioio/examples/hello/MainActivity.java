@@ -1,22 +1,16 @@
 package ioio.examples.hello;
 
 
-import ioio.examples.hello.R;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.AbstractIOIOActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnKeyListener;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.ToggleButton;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 /**
  * This is the main activity of the HelloIOIO example application.
@@ -38,37 +32,7 @@ public class MainActivity extends AbstractIOIOActivity {
 	private EditText runningLedCountEditText;;
 	private static final int LED_COUNT = 23;
 
-	private void connectSeekBarAndEditText(final SeekBar seekbar, final EditText editText){
-		editText.setText(""+seekbar.getProgress());
-		editText.setOnKeyListener(new OnKeyListener() {
-			
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (editText.getText().length() > 0) {
-					seekbar.setProgress(Integer.parseInt(editText.getText().toString()));
-				}
-				else {
-					seekbar.setProgress(0);
-				}
-				return false;
-			}
-		});
-		
-		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			
-			public void onStopTrackingTouch(SeekBar seekBar) {
-			}
-			
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			}
-			
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				if (fromUser){
-					editText.setText(""+seekBar.getProgress());
-				}
-			}
-		});
-	}
+	
 	
 	/**
 	 * Called when the activity is first created. Here we normally initialize
@@ -107,12 +71,12 @@ public class MainActivity extends AbstractIOIOActivity {
 
 	}
 	
-	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, 2, 0,"Runnig Detection");
 		menu.add(0, 0, 1, "LED Test");
 		menu.add(0, 1, 2,"Input Test");
+		menu.add(0, 1, 3,"PWM Test");
 		return super.onCreateOptionsMenu(menu);
 	}
 	@Override
@@ -128,6 +92,9 @@ public class MainActivity extends AbstractIOIOActivity {
 		case 2:
 			Intent intent2 = new Intent(this, BetterRunningLights.class);
 			startActivity(intent2);
+		case 3:
+			Intent intent3 = new Intent(this, PwmTestActivity.class);
+			startActivity(intent3);
 		default:
 			break;
 		}

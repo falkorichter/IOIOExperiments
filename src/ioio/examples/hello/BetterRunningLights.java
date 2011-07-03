@@ -42,37 +42,7 @@ public class BetterRunningLights extends AbstractIOIOActivity {
 	private EditText runningLedCountEditText;
 	private int LED_COUNT = 23;
 
-	private void connectSeekBarAndEditText(final SeekBar seekbar, final EditText editText){
-		editText.setText(""+seekbar.getProgress());
-		editText.setOnKeyListener(new OnKeyListener() {
-
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				if (editText.getText().length() > 0) {
-					seekbar.setProgress(Integer.parseInt(editText.getText().toString()));
-				}
-				else {
-					seekbar.setProgress(0);
-				}
-				return false;
-			}
-		});
-
-		seekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
-			public void onStopTrackingTouch(SeekBar seekBar) {
-			}
-
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			}
-
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
-				if (fromUser){
-					editText.setText(""+seekBar.getProgress());
-				}
-			}
-		});
-	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

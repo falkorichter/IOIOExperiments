@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionCode="1" android:versionName="1.0" package="ioio.examples.hello">
-	<uses-sdk android:minSdkVersion="9" />
+	<uses-sdk android:minSdkVersion="8" />
 	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
@@ -14,5 +14,7 @@
 		<activity android:label="IOIOStatus" android:name="StatusTest" />
 		<activity android:label="IOIOInput" android:name="InputTest" />
 		<activity android:label="Running Lights with Detection" android:name="BetterRunningLights" />
+		<activity android:label="PWM Test" android:name="PwmTestActivity" />
+		
 	</application>
 </manifest>
